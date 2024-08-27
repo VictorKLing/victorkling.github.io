@@ -1,0 +1,54 @@
+{% extends 'FlexyFtwoStoreBundle:Layout:base.html.twig' %}
+
+{% set title = "Meus dados" %}
+{% set isLightHeader = true %}
+
+{% block content %}
+    {% include 'FlexyFtwoStoreBundle:Include:alerts.html.twig' with {
+        'alerts' : app.session.flashbag.get('store-customer-update-success'),
+        'error' : false
+    } %}
+
+    <section style="min-height: 80vh;">
+        <div class="second-page-container">
+            <div class="container pv-4">
+            	<div class="container-breadcrumbs relative mt-4 pb-2">
+            		{% include 'FlexyFtwoStoreBundle:Include:breadcrumbs.html.twig' with {path : [{'title' : title }] } %}
+            		<h1 class="styled-title font-size-5 font-weight-300 text-align-center text-black">Minha Conta</h1>
+                </div>
+                <div class="columns sm-gap">
+                	<div class="col-md-3 col-sm-12 container-border-my-account">
+                		{% include 'FlexyFtwoStoreBundle:Customer:header.html.twig' with {customer: customer} %}
+                    </div>      
+                    <div class="col-md-9 col-sm-12 container-border-my-account container-update-client ph-2 pv-2">
+                        <h3 class="text-primary font-size-6 font-weight-700 mb-2">Atualizar dados</h3>
+
+                        <form action="{{ path("flexy_ftwo_store_customer_update") }}" class="" role="form" method="post" enctype="multipart/form-data">
+                            {% set redirectTo = app.request.get('redirect') %}
+                            {% if redirectTo %}
+                                <input type="hidden" name="redirectTo" value="{{ redirectTo }}" />
+                            {% endif %}
+                            {% include 'FlexyFtwoStoreBundle:Include/Form:customer-update.html.twig' %}
+                        </form>
+                   </div>  
+               </div>
+            </div>
+        </div>
+    </section>
+{%  endblock %}
+
+{% block javascript %}
+    <script>
+        Array.from(document.querySelectorAll('.delete-customer-button')).forEach(item => {
+            item.onclick = event => {
+                event.preventDefault();
+                event.stopPropagation();
+                let isToDelete = confirm('Você tem certeza que deseja excluir a sua conta? Se desejar excluir, terá que criar uma nova conta para fazer novos pedidos. Informações pessoais também serão apagadas, com excessão daquelas que devemos legalmente manter por determinado período e as necessárias para garantir sua segurança. \nATENÇÃO: Se você tiver algum pedido em andamento você ainda poderá receber e-mails sobre o status desse pedido.');
+                if (!isToDelete) {
+                    return;
+                }
+                window.location.href = item.dataset.href;
+            }
+        });
+    </script>
+{% endblock %}
